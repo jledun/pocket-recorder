@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Les Free Guits</title>
+    <link rel="stylesheet" href="/css/style.css"/>
+  </head>
+  <body>
+    <div class="main">
+      <div id="menu" class="menu">
+        <ul>
+          <li>Enregistreur</li>
+          <li>Lecteur</li>
+        </ul>
+      </div>
+      <div id="recorder" class="container">
+        <button style="background-color: MediumSeaGreen;" onclick="onClickNew()">Nouveau</button>
+        <button onclick="onClickRead()">Lire</button>
+        <button style="background-color: Orange;" onclick="onClickPause()">Pause</button>
+        <button style="background-color: Tomato;" onclick="onClickStop()">Stop</button>
+      </div>
+      <div id="player" class="container" style="display: none;">
+      </div>
+      <div id="bottombar" class="bottombar">
+        Enregistrement en cours...
+      </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/index.js"></script>
+  </body>
+</html>

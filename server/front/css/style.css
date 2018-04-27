@@ -1,0 +1,52 @@
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0px;
+}
+.main {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  height: 100%;
+}
+.container {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.container > * {
+  flex: 0 0 auto;
+}
+.bottom-bar {
+  flex: 0 0 auto;
+}
+button {
+  margin-top: 15px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 180px;
+  height: 120px;
+  padding: 25px;
+  font-size: 1.3em;
+  font-weight: bold;
+}
+.menu {
+  width: 100%;
+  height: 35px;
+  border-bottom: 1px grey solid;
+  display: none;
+}
+a {
+  color: inherit;
+}
+ul {
+  list-style-type: none;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+li {
+  flex: 0 0 auto;
+  margin-right: 15px;
+}

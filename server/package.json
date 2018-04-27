@@ -5,6 +5,7 @@
   "main": "server.js",
   "dependencies": {
     "express": "^4.16.1",
+    "node-aplay": "^1.0.3",
     "node-arecord": "0.0.2",
     "socket.io": "^2.0.3"
   },

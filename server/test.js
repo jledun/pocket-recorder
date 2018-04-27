@@ -13,9 +13,8 @@ sound.record();
 setTimeout(function () {
 	console.log("stop");
 	sound.stop(); // stop after ten seconds
-}, 10000);
+}, 5000);
 
-// you can also listen for various callbacks:
-// sound.on('complete' function () {
-// 	console.log('Done with recording!');
-// 	});
+sound.on('complete', function () {
+	console.log('Done with recording!');
+});
