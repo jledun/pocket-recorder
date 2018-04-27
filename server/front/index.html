@@ -13,16 +13,22 @@
           <li>Lecteur</li>
         </ul>
       </div>
-      <div id="recorder" class="container">
-        <button style="background-color: MediumSeaGreen;" onclick="onClickNew()">Nouveau</button>
-        <button onclick="onClickRead()">Lire</button>
-        <button style="background-color: Orange;" onclick="onClickPause()">Pause</button>
-        <button style="background-color: Tomato;" onclick="onClickStop()">Stop</button>
+      <div id="soundManager" class="container">
+        <button id="new" style="background-color: MediumSeaGreen;" onclick="onClickNew()">Nouveau</button>
+        <button id="play" onclick="onClickPlay()">Lire</button>
       </div>
-      <div id="player" class="container" style="display: none;">
+      <div id="recorder" class="container">
+        <button id="resumeRecord" style="background-color: grey;" onclick="onClickResumeRecord()">Reprise</button>
+        <button id="pauseRecord" style="background-color: Orange;" onclick="onClickPauseRecord()">Pause</button>
+        <button style="background-color: Tomato;" onclick="onClickStopRecord()">Stop</button>
+      </div>
+      <div id="player" class="container">
+        <button id="resumePlay" style="background-color: grey;" onclick="onClickResumePlay()">Reprise</button>
+        <button id="pausePlay" style="background-color: Orange;" onclick="onClickPausePlay()">Pause</button>
+        <button style="background-color: Tomato;" onclick="onClickStopPlay()">Stop</button>
       </div>
       <div id="bottombar" class="bottombar">
-        Enregistrement en cours...
+        <span id="srvStatus">Attente connexion serveur...</span>
       </div>
     </div>
     <script src="/socket.io/socket.io.js"></script>

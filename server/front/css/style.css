@@ -18,8 +18,11 @@ html, body {
 .container > * {
   flex: 0 0 auto;
 }
-.bottom-bar {
+.bottombar {
   flex: 0 0 auto;
+  padding: 15px;
+  border-top: 1px grey solid;
+  background-color: #f6f6f6;
 }
 button {
   margin-top: 15px;
