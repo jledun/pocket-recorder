@@ -3,10 +3,15 @@
 const aRecord = require('node-arecord');
 const aPlay = require('node-aplay');
 const utils = require('./utils.js');
+const fs = require('fs');
+const { exec } = require('child_process');
+const Rx = require('rxjs/Rx');
 
 const refreshFilename = (options) => {
   return Object.assign(options, {filename: 'record-'.concat(utils.getTimeStamp(), '.wav')});
 };
+
+const noop = () => {};
 
 const o = {
   status: {
@@ -18,19 +23,23 @@ const o = {
       o.status[mode] = value;
       o.status.msg = msg;
       if (o.socket) o.socket.emit('status', Object.assign({}, o.status));
+    }, sendFileData: (data) => {
+      if (o.socket) o.socket.emit('files', Object.assign({}, data));
     }
   },
   options: {
     debug: true,
-    destination_folder: "/home/pi/Music",
+    destination_folder: require('./config.json').path,
     filename: 'record-'.concat(utils.getTimeStamp(), '.wav'),
     alsa_format: 'cd',
-    alsa_device: 'plughw:1,0'
+    alsa_device: require('./config.json').alsa_device
   },
   player: {},
   recorder: {},
+  interval: 0,
   setSocket: socket => {
     o.socket = socket;
+    if (o.interval) clearInterval(o.interval);
     if (o.socket) {
       o.socket.on('new', () => {
         let stopPlayDone = false;
@@ -68,6 +77,7 @@ const o = {
       o.socket.on('stopRecord', o.stopRecord);
       o.socket.on('pauseRecord', o.pauseRecord);
       o.socket.on('resumeRecord', o.resumeRecord);
+      o.interval = setInterval(() => o.getFiles.call(this, o), 1000);
     }
   },
   record: () => {
@@ -94,7 +104,80 @@ const o = {
   },
   pausePlay: () => o.player.pause(),
   resumePlay: () => o.player.resume(),
-  stopPlay: () => o.player.stop()
+  stopPlay: () => o.player.stop(),
+  files: [],
+  getFiles: (p) => {
+    let result = {};
+    Rx.Observable.of('df').concatMap(cmd => {
+      return Rx.Observable.create(o => {
+        exec(cmd, (err, stdout, stderr) => {
+          if (err) return o.error(err);
+          let tmp = {};
+          let out = stdout.split("\n")
+          .filter(line => line.indexOf("/dev/root") >= 0)[0]
+          .split(" ")
+          .filter(line => line !== "")
+          .forEach((line, i) => {
+            switch(i) {
+              case 1:
+              tmp.total = line;
+              break;
+              case 2:
+              tmp.used = line;
+              break;
+              case 3:
+              tmp.free = line;
+              break;
+              case 4:
+              tmp.rate = line.substring(0, 2);
+              break;
+            }
+          });
+          o.next(Object.assign({}, {stdout: tmp, stderr: stderr}));
+          o.complete();
+        });
+      });
+    }).concatMap(dfResult => {
+      result.filesystem = dfResult;
+      return Rx.Observable.of(p.options.destination_folder);
+    }).concatMap(path => {
+      return Rx.Observable.create(o => {
+        fs.readdir(path, {encoding: 'utf-8'}, (err, files) => {
+          if (err) return o.error(err);
+          o.next(files.filter(file => file.indexOf(".wav") >= 0));
+          o.complete();
+        })
+      });
+    }).concatMap(files => {
+      return Rx.Observable.forkJoin(files.map(filename => {
+        return Rx.Observable.of({
+          path: "".concat(p.options.destination_folder),
+          filename: "".concat(filename),
+          type: "wav"
+        });
+      }));
+    }).defaultIfEmpty('NO_EFFECT').concatMap(files => {
+      return Rx.Observable.forkJoin(files.map(file => {
+        return Rx.Observable.create(o => {
+          fs.stat(file.path.concat('/', file.filename), (err, stats) => {
+            if (err) return o.error(err);
+            o.next(Object.assign({}, file, {stat: stats}));
+            o.complete();
+          })
+        })
+      }));
+    }).defaultIfEmpty('NO_EFFECT').concatMap(files => {
+      result = Object.assign({}, result, {files: files});
+      return Rx.Observable.of(result.files.find(file => file.filename === p.options.filename));
+    }).subscribe(
+      data => {
+        result.currentRecording = data;
+        p.status.sendFileData(result);
+      },
+      err => console.log(err),
+      noop
+    );
+  }
 };
 
 module.exports = o;

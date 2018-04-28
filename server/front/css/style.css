@@ -46,8 +46,8 @@ a {
 ul {
   list-style-type: none;
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
+  flex-direction: column;
+  flex-wrap: nowrap;
 }
 li {
   flex: 0 0 auto;

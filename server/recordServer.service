@@ -1,0 +1,14 @@
+[Unit]
+Description=Pocket Recorder for the Free Guits
+After=network.target
+
+[Service]
+Type=simple
+User=pi
+Group=pi
+WorkingDirectory=/home/pi/Documents/PocketRecorderProject/server/
+ExecStart=/usr/bin/node /home/pi/Documents/PocketRecorderProject/server/server.js
+ExecStop=/usr/bin/killall node
+
+[Install]
+WantedBy=multi-user.target

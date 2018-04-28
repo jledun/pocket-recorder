@@ -7,12 +7,12 @@ socket.on('status', status => {
     document.getElementById("soundManager").style.display = "none";
     switch (status.recording) {
       case 1:
-      document.getElementById("resumeRecord").disabled = true;
-      document.getElementById("pauseRecord").disabled = false;
+      document.getElementById("resumeRecord").style.visibility = 'hidden';
+      document.getElementById("pauseRecord").style.visibility = 'visible';
       break;
       case 2:
-      document.getElementById("resumeRecord").disabled = false;
-      document.getElementById("pauseRecord").disabled = true;
+      document.getElementById("resumeRecord").style.visibility = 'visible';
+      document.getElementById("pauseRecord").style.visibility = 'hidden';
       break;
     }
   }else if (status.playing > 0) {
@@ -21,12 +21,12 @@ socket.on('status', status => {
     document.getElementById("soundManager").style.display = "none";
     switch (status.playing) {
       case 1:
-      document.getElementById("resumePlay").disabled = true;
-      document.getElementById("pausePlay").disabled = false;
+      document.getElementById("resumePlay").style.visibility = 'hidden';
+      document.getElementById("pausePlay").style.visibility = 'visible';
       break;
       case 2:
-      document.getElementById("resumePlay").disabled = false;
-      document.getElementById("pausePlay").disabled = true;
+      document.getElementById("resumePlay").style.visibility = 'visible';
+      document.getElementById("pausePlay").style.visibility = 'hidden';
       break;
     }
   }else{
@@ -34,8 +34,16 @@ socket.on('status', status => {
     document.getElementById("player").style.display = "none";
     document.getElementById("soundManager").style.display = "block";
   }
-  document.getElementById('srvStatus').innerHTML = status.msg;
+  document.getElementById('srvStatus').innerHTML = status.msg || "Prêt :-)";
 });
+socket.on('files', filedatas => {
+  let tmp = "<ul>";
+  filedatas.files.forEach(file => {
+    tmp = tmp.concat(`<li>${file.filename}</li>`);
+  });
+  tmp = tmp.concat("</ul>");
+  document.getElementById('filelist').innerHTML = tmp;
+})
 
 function onClickNew() {
   socket.emit('new');

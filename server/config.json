@@ -1,0 +1,5 @@
+{
+    "host": "192.168.32.1",
+    "path": "/home/pi/Music",
+    "alsa_device": "plughw:1,0"
+}

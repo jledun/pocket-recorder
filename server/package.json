@@ -1,5 +1,5 @@
 {
-  "name": "PocketRecorder",
+  "name": "pocket-recorder",
   "version": "0.0.0",
   "description": "a pocket recorder with arecord",
   "main": "server.js",
@@ -7,6 +7,8 @@
     "express": "^4.16.1",
     "node-aplay": "^1.0.3",
     "node-arecord": "0.0.2",
+    "rxjs": "^6.0.0",
+    "rxjs-compat": "^6.0.0",
     "socket.io": "^2.0.3"
   },
   "devDependencies": {},
