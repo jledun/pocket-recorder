@@ -8,7 +8,7 @@ This setup is made for a fresh raspbian install and a usb soundcard is connected
 
 ## install and run
 
-from you home folder on your Raspberry Pi 3:
+from your home folder on your Raspberry Pi 3:
 
 ```bash
 > cd ~/Documents
@@ -17,7 +17,8 @@ from you home folder on your Raspberry Pi 3:
 > npm install
 > sudo cp recordServer.service /lib/systemd/system/
 > sudo systemctl daemon-reload
-> sudo systemctl start recordServer
+> sudo systemctl start recordServer    # TO TEST
+> sudo systemctl enable recordServer   # TO AUTOMATICLY START AT BOOT
 ```
 
 ## What it does 
