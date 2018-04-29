@@ -5,6 +5,7 @@
   "main": "server.js",
   "dependencies": {
     "express": "^4.16.1",
+    "filesize": "^3.6.1",
     "node-aplay": "^1.0.3",
     "node-arecord": "0.0.2",
     "rxjs": "^6.0.0",

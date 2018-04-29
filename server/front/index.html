@@ -7,12 +7,6 @@
   </head>
   <body>
     <div class="main">
-      <div id="menu" class="menu">
-        <ul>
-          <li>Enregistreur</li>
-          <li>Lecteur</li>
-        </ul>
-      </div>
       <div id="soundManager" class="container">
         <button id="new" style="background-color: MediumSeaGreen;" onclick="onClickNew()">Nouveau</button>
         <button id="play" onclick="onClickPlay()">Lire</button>
@@ -27,13 +21,18 @@
         <button id="pausePlay" style="background-color: Orange;" onclick="onClickPausePlay()">Pause</button>
         <button style="background-color: Tomato;" onclick="onClickStopPlay()">Stop</button>
       </div>
-      <div id="filelist" class="container">
-        <ul>
-          <li>Chargement en cours...</li>
+      <div id="filelist" class="container-flex">
+        <ul class="filelist-container">
+          <li class="filelist-item">Chargement en cours...</li>
         </ul>
       </div>
       <div id="bottombar" class="bottombar">
         <span id="srvStatus">Attente connexion serveur...</span>
+        <span class="spring"></span>
+        <span>
+          <button onclick="onClickReboot()">Redémarrer</button>
+          <button onclick="onClickShutdown()">Eteindre</button>
+        </span>
       </div>
     </div>
     <script src="/socket.io/socket.io.js"></script>

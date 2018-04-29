@@ -24,7 +24,8 @@ const o = {
       o.status.msg = msg;
       if (o.socket) o.socket.emit('status', Object.assign({}, o.status));
     }, sendFileData: (data) => {
-      if (o.socket) o.socket.emit('files', Object.assign({}, data));
+      o.fsdata = Object.assign({}, data);
+      if (o.socket) o.socket.emit('files', o.fsdata);
     }
   },
   options: {
@@ -77,8 +78,46 @@ const o = {
       o.socket.on('stopRecord', o.stopRecord);
       o.socket.on('pauseRecord', o.pauseRecord);
       o.socket.on('resumeRecord', o.resumeRecord);
+      o.socket.on('playItem', o.playItem);
+      o.socket.on('rename', o.rename);
+      o.socket.on('delete', o.delete);
+      o.socket.on('shutdown', o.shutdown);
+      o.socket.on('reboot', o.reboot);
       o.interval = setInterval(() => o.getFiles.call(this, o), 1000);
     }
+  },
+  cmdExec: cmd => {
+    exec(cmd, (err, stout, sterr) => {
+      if (err) return console.log(err);
+      console.log(stout);
+      console.log(sterr);
+    });
+  },
+  shutdown: () => {
+    o.cmdExec('sudo systemctl poweroff');
+  },
+  reboot: () => {
+    o.cmdExec('sudo systemctl reboot');
+  },
+  rename: (data) => {
+    if (!o.fsdata) return;
+    if (!o.fsdata.files || o.fsdata.files.length <= 0) return;
+    if (!o.fsdata.files[data.item]) return;
+    o.options.filename = o.fsdata.files[data.item].filename;
+    o.cmdExec("mv ".concat("\"", o.options.destination_folder, '/', o.options.filename, '\" \"', o.options.destination_folder, '/', data.newName, "\""));
+  },
+  delete: item => {
+    if (!o.fsdata) return;
+    if (!o.fsdata.files || o.fsdata.files.length <= 0) return;
+    if (!o.fsdata.files[item]) return;
+    o.cmdExec("rm ".concat("\"", o.options.destination_folder, '/', o.fsdata.files[item].filename, "\""));
+  },
+  playItem: item => {
+    if (!o.fsdata) return;
+    if (!o.fsdata.files || o.fsdata.files.length <= 0) return;
+    if (!o.fsdata.files[item]) return;
+    o.options.filename = o.fsdata.files[item].filename;
+    o.play();
   },
   record: () => {
     o.options = refreshFilename(o.options);
