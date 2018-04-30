@@ -67,7 +67,7 @@ socket.on('files', filedatas => {
             <span><button onclick="onClickRename(${i})">Renommer</button></span>
           </span>
           <span>
-            <span><button><a href="${window.location.href}download?file=${file.path.concat('/', file.filename)}" target="_blank">Télécharger</a></button></span>
+            <span><button><a href="${window.location.origin}/download?file=${file.path.concat('/', file.filename)}" target="_blank">Télécharger</a></button></span>
             <span><button onclick="onClickPlayItem(${i})">Lire</button></span>
           </span>
         </li>
