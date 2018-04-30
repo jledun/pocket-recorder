@@ -2,7 +2,19 @@
 const socket = io();
 let fsdata = {};
 let config = {};
+let busy = true;
 
+function setBusy(value) {
+  switch (value) {
+    case true:
+    document.getElementById('loader').style.display = 'block';
+    break;
+    default:
+    document.getElementById('loader').style.display = 'none';
+    break;
+  }
+  busy = false;
+}
 socket.on('status', status => {
   document.getElementById('srvStatus').innerHTML = status.msg || "Prêt :-)";
   if (location.pathname !== "/" && location.pathname !== "/index.html") return;
@@ -66,6 +78,7 @@ socket.on('files', filedatas => {
   }
   tmp = tmp.concat("</ul>");
   document.getElementById('filelist').innerHTML = tmp;
+  setBusy(false);
 });
 socket.on('config', config => {
   config = Object.assign({}, config);
@@ -75,18 +88,28 @@ socket.on('config', config => {
   document.getElementById('field-debug').checked = config.debug || false;
 });
 function onClickShutdown() {
-  if (confirm("Sûr(e) que tu veux arrêter ce superbe ordi ?")) socket.emit('shutdown');
+  if (confirm("Sûr(e) que tu veux arrêter ce superbe ordi ?")) {
+    setBusy(true);
+    socket.emit('shutdown');
+  }
 }
 function onClickReboot() {
-  if (confirm("Sûr(e) que tu veux me redémarrer ?")) socket.emit('reboot');
+  if (confirm("Sûr(e) que tu veux me redémarrer ?")) {
+    setBusy(true);
+    socket.emit('reboot');
+  }
 }
 function onClickDelete(item) {
   let response = confirm("Sûr(e) ?");
-  if (response) socket.emit('delete', item);
+  if (response) {
+    setBusy(true);
+    socket.emit('delete', item);
+  }
 }
 function onClickRename(item, defaultFilename = "*.wav") {
   let response = prompt("Nouveau nom", defaultFilename);
   if (response) {
+    setBusy(true);
     socket.emit('rename', {item: item, newName: response.replace(' ', '-')});
   }
 }
@@ -137,6 +160,7 @@ function onClickSaveOptions() {
 }
 
 window.onload = () => {
+  setBusy(true);
   switch (location.pathname) {
     case "/options.html":
     setTimeout(configReload, 500);
