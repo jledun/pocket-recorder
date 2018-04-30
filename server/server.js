@@ -11,7 +11,7 @@ app.use('/', express.static('./front'));
 app.get('/download', (req, res) => {
   if (!req.query.file) return res.status(400).end();
   res.sendFile(req.query.file);
-})
+});
 
 io.on('connection', (socket) => {
   sound.setSocket(socket);

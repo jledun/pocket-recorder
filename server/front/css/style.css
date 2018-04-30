@@ -14,6 +14,7 @@ html, body {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  padding: 15px;
 }
 .container > * {
   flex: 0 0 auto;
@@ -21,6 +22,7 @@ html, body {
 .container-flex {
   flex: 1 1 auto;
   overflow-y: scroll;
+  padding: 15px;
 }
 .bottombar {
   flex: 0 0 auto;
@@ -32,7 +34,6 @@ html, body {
   flex-wrap: nowrap;
 }
 .container > button {
-  margin-top: 15px;
   margin-left: auto;
   margin-right: auto;
   width: 180px;
@@ -56,17 +57,16 @@ ul {
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
+  padding: 0px;
+  margin: 0px;
 }
 li {
   flex: 0 0 auto;
-  margin-right: 15px;
-}
-.filelist-container {
 }
 .filelist-item {
   display: flex;
   flex-direction: row;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   padding: 5px;
 }
 .filelist-item > * {

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Les Free Guits</title>
+    <link rel="stylesheet" href="/css/style.css"/>
+  </head>
+  <body>
+    <div class="main">
+      <div class="container"><h1>Application options</h1></div>
+      <div id="options-form" class="container-flex">
+        <!-- <form action="/options.html" method="post" novalidate> -->
+          <ul class="filelist-container">
+            <li class="filelist-item">
+              <span class="spring"></span>
+              <span><button onclick="configReload()">Recharger les valeurs d'origine</button></span>
+            </li>
+            <li class="filelist-item">
+              <span>Destination folder</span>
+              <span class="spring"></span>
+              <span>
+                <input type="text" id="field-destination-folder" name="destination_folder" value="Path to files">
+              </span>
+            </li>
+            <li class="filelist-item">
+              <span>Alsa format</span>
+              <span class="spring"></span>
+              <span>
+                <input type="text" id="field-alsa-format" name="alsa_format" value="alsa format">
+              </span>
+            </li>
+            <li class="filelist-item">
+              <span>Alsa arecord device</span>
+              <span class="spring"></span>
+              <span>
+                <input type="text" id="field-alsa-device" name="alsa_device" value="alsa device">
+              </span>
+            </li>
+            <li class="filelist-item">
+              <span>Debug</span>
+              <span class="spring"></span>
+              <span>
+                <input type="checkbox" id="field-debug" name="debug" checked="false">
+              </span>
+            </li>
+            <li class="filelist-item">
+              <span class="spring"></span>
+              <span><button onclick="onClickSaveOptions()">Enregistrer</button></span>
+              <!-- <span><button type="submit">Enregistrer</button></span> -->
+            </li>
+          </ul>
+        <!-- </form> -->
+      </div>
+      <div id="bottombar" class="bottombar">
+        <span id="srvStatus">Attente connexion serveur...</span>
+        <span class="spring"></span>
+        <span>
+          <button><a href="/index.html">Retour</a></button>
+          <button onclick="onClickReboot()">Redémarrer</button>
+          <button onclick="onClickShutdown()">Eteindre</button>
+        </span>
+      </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/index.js"></script>
+  </body>
+</html>

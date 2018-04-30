@@ -1,8 +1,11 @@
 
 const socket = io();
 let fsdata = {};
+let config = {};
 
 socket.on('status', status => {
+  document.getElementById('srvStatus').innerHTML = status.msg || "Prêt :-)";
+  if (location.pathname !== "/" && location.pathname !== "/index.html") return;
   if (status.recording > 0) {
     document.getElementById("recorder").style.display = "block";
     document.getElementById("player").style.display = "none";
@@ -36,29 +39,41 @@ socket.on('status', status => {
     document.getElementById("player").style.display = "none";
     document.getElementById("soundManager").style.display = "block";
   }
-  document.getElementById('srvStatus').innerHTML = status.msg || "Prêt :-)";
 });
 socket.on('files', filedatas => {
+  if (location.pathname !== "/" && location.pathname !== "/index.html") return;
   let tmp = '<ul class="filelist-container">';
-  filedatas.files.forEach((file, i) => {
-    tmp = tmp.concat(`
-      <li class="filelist-item${(filedatas.currentRecording && filedatas.currentRecording.filename && file.filename === filedatas.currentRecording.filename) ? ' selected' : ''}">
-      <span>${file.filename}</span>
-      <span class="spring"></span>
-      <span><button onclick="test(${i})">Test</button></span>
-      <span><button onclick="onClickDelete(${i})">Supprimer</button></span>
-      <span><button onclick="onClickRename(${i})">Renommer</button></span>
-      <span><button><a href="${window.location.href}download?file=${file.path.concat('/', file.filename)}" target="_blank">Télécharger</a></button></span>
-      <span><button onclick="onClickPlayItem(${i})">Lire</button></span>
-      </li>
-      `);
-  });
+  if (filedatas.files.length > 0) {
+    filedatas.files.forEach((file, i) => {
+      tmp = tmp.concat(`
+        <li class="filelist-item${(filedatas.currentRecording && filedatas.currentRecording.filename && file.filename === filedatas.currentRecording.filename) ? ' selected' : ''}">
+          <span>${file.filename}</span>
+          <span>(${file.stat.size})</span>
+          <span class="spring"></span>
+          <span>
+            <span><button onclick="onClickDelete(${i})">Supprimer</button></span>
+            <span><button onclick="onClickRename(${i})">Renommer</button></span>
+          </span>
+          <span>
+            <span><button><a href="${window.location.href}download?file=${file.path.concat('/', file.filename)}" target="_blank">Télécharger</a></button></span>
+            <span><button onclick="onClickPlayItem(${i})">Lire</button></span>
+          </span>
+        </li>
+        `);
+    });
+  }else{
+    tmp = tmp.concat('<li class="filelist-item" style="font-style: italic;">Dossier vide</li>');
+  }
   tmp = tmp.concat("</ul>");
   document.getElementById('filelist').innerHTML = tmp;
 });
-function test() {
-  alert(window.location.host);
-}
+socket.on('config', config => {
+  config = Object.assign({}, config);
+  document.getElementById('field-destination-folder').value = config.destination_folder || "";
+  document.getElementById('field-alsa-format').value = config.alsa_format || "";
+  document.getElementById('field-alsa-device').value = config.alsa_device || "";
+  document.getElementById('field-debug').checked = config.debug || false;
+});
 function onClickShutdown() {
   if (confirm("Sûr(e) que tu veux arrêter ce superbe ordi ?")) socket.emit('shutdown');
 }
@@ -106,4 +121,25 @@ function onClickPauseRecord() {
 function onClickResumeRecord() {
   socket.emit('resumeRecord');
 }
+function configReload() {
+  config = {};
+  socket.emit('getConfig');
+}
+function onClickSaveOptions() {
+  const newConfig = {
+    destination_folder: document.getElementById('field-destination-folder').value,
+    alsa_device: document.getElementById('field-alsa-device').value,
+    alsa_format: document.getElementById('field-alsa-format').value,
+    debug: document.getElementById('field-debug').checked,
+    filename: ""
+  };
+  socket.emit('updateConfig', newConfig);
+}
 
+window.onload = () => {
+  switch (location.pathname) {
+    case "/options.html":
+    setTimeout(configReload, 500);
+    break;
+  }
+}

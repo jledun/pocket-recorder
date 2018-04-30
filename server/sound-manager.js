@@ -5,6 +5,7 @@ const aPlay = require('node-aplay');
 const utils = require('./utils.js');
 const fs = require('fs');
 const { exec } = require('child_process');
+const filesize = require('filesize');
 const Rx = require('rxjs/Rx');
 
 const refreshFilename = (options) => {
@@ -28,13 +29,7 @@ const o = {
       if (o.socket) o.socket.emit('files', o.fsdata);
     }
   },
-  options: {
-    debug: true,
-    destination_folder: require('./config.json').path,
-    filename: 'record-'.concat(utils.getTimeStamp(), '.wav'),
-    alsa_format: 'cd',
-    alsa_device: require('./config.json').alsa_device
-  },
+  options: require('./config.json'),
   player: {},
   recorder: {},
   interval: 0,
@@ -83,6 +78,8 @@ const o = {
       o.socket.on('delete', o.delete);
       o.socket.on('shutdown', o.shutdown);
       o.socket.on('reboot', o.reboot);
+      o.socket.on('getConfig', () => o.socket.emit('config', Object.assign({}, o.options)));
+      o.socket.on('updateConfig', o.updateConfig);
       o.interval = setInterval(() => o.getFiles.call(this, o), 1000);
     }
   },
@@ -91,6 +88,13 @@ const o = {
       if (err) return console.log(err);
       console.log(stout);
       console.log(sterr);
+    });
+  },
+  updateConfig: newConfig => {
+    console.log("config update by the client");
+    fs.writeFile('./config.json', JSON.stringify(newConfig, null, 2), err => {
+      if (err) return console.log(err);
+      o.options = Object.assign({}, o.options, newConfig);
     });
   },
   shutdown: () => {
@@ -147,7 +151,7 @@ const o = {
   files: [],
   getFiles: (p) => {
     let result = {};
-    Rx.Observable.of('df').concatMap(cmd => {
+    Rx.Observable.of('df -h').concatMap(cmd => {
       return Rx.Observable.create(o => {
         exec(cmd, (err, stdout, stderr) => {
           if (err) return o.error(err);
@@ -168,7 +172,7 @@ const o = {
               tmp.free = line;
               break;
               case 4:
-              tmp.rate = line.substring(0, 2);
+              tmp.rate = line;
               break;
             }
           });
@@ -183,6 +187,7 @@ const o = {
       return Rx.Observable.create(o => {
         fs.readdir(path, {encoding: 'utf-8'}, (err, files) => {
           if (err) return o.error(err);
+          if (!files || files.length <= 0) return o.error(new Error('Empty folder'));
           o.next(files.filter(file => file.indexOf(".wav") >= 0));
           o.complete();
         })
@@ -200,6 +205,7 @@ const o = {
         return Rx.Observable.create(o => {
           fs.stat(file.path.concat('/', file.filename), (err, stats) => {
             if (err) return o.error(err);
+            stats.size = filesize(stats.size);
             o.next(Object.assign({}, file, {stat: stats}));
             o.complete();
           })
@@ -213,7 +219,11 @@ const o = {
         result.currentRecording = data;
         p.status.sendFileData(result);
       },
-      err => console.log(err),
+      err => {
+        result.currentRecording = {};
+        result.files = [];
+        p.status.sendFileData(result);
+      },
       noop
     );
   }
