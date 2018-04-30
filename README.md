@@ -29,8 +29,9 @@ With this basic web application, you can :
 * record, pause, resume the input of your selected soundcard (selected in config.json) (with alsa arecord)
 * play, pause, resume the last recordings made
 * manage your recordings : rename files, delete files, download to your web browser or simply play it to the soundcard of the RPI (with alsa aplay)
-*  you can add music (wav format) in the destination_folder then play it
+* you can add music (wav format) in the destination_folder then play it
 * reboot or shutdown the RPI
+* manage arecord options from web application, options are saved into server/config.json file.
 
 ## Other options to help while on performing on stage
 
@@ -43,6 +44,15 @@ My RPI3 is set as a wifi Access Point so that :
 * my tablet is connected to this network and displays all my lyrics & chords (pdf files on samba share)
 
 Every client connected to the RPI wifi AP have access to the shared folder.
+
+## TODO
+
+* autogenerate systemd service so that it's not dependant of the installation folder and to remove my personnal PocketRecorderProject folder
+* better design
+* validate options before save to file
+* documentation : add RPI3 setup as a wifi access point
+* documentation : screenshots and user manual
+* documentation : how to share a folder on your RPI3 (to copy all files to windows easilly)
 
 ## Licence 
 
