@@ -27,6 +27,7 @@ const o = {
     }, sendFileData: (data) => {
       o.fsdata = Object.assign({}, data);
       if (o.socket) o.socket.emit('files', o.fsdata);
+      if (o.socket) o.socket.emit('status', Object.assign({}, o.status));
     }
   },
   options: require('./config.json'),
