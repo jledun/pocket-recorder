@@ -55,6 +55,20 @@ socket.on('status', status => {
 socket.on('files', filedatas => {
   if (location.pathname !== "/" && location.pathname !== "/index.html") return;
   let tmp = '<ul class="filelist-container">';
+  let style = "fssize";
+  if (filedatas.filesystem.stdout.rate >= "80%" && filedatas.filesystem.stdout.rate < "95%") {
+    style = "fssize-warning";
+  }else if (filedatas.filesystem.stdout.rate >= "95%") {
+    style = "fssize-danger";
+  }
+  tmp = tmp.concat(`
+    <li class="filelist-item ${style}">
+      <span>Total : ${filedatas.filesystem.stdout.total}</span>
+      <span>Utilisé : ${filedatas.filesystem.stdout.used}</span>
+      <span>Libre : ${filedatas.filesystem.stdout.free}</span>
+      <span>Taux d'utilisation : ${filedatas.filesystem.stdout.rate}</span>
+    </li>
+  `);
   if (filedatas.files.length > 0) {
     filedatas.files.forEach((file, i) => {
       tmp = tmp.concat(`
