@@ -55,26 +55,31 @@ socket.on('status', status => {
 socket.on('files', filedatas => {
   if (location.pathname !== "/" && location.pathname !== "/index.html") return;
   let tmp = '<ul class="filelist-container">';
-  let style = "fssize";
-  if (filedatas.filesystem.stdout.rate >= "80%" && filedatas.filesystem.stdout.rate < "95%") {
-    style = "fssize-warning";
-  }else if (filedatas.filesystem.stdout.rate >= "95%") {
-    style = "fssize-danger";
+  if (filedatas.filesystem) {
+    let style = "fssize";
+    if (filedatas.filesystem.stdout.rate >= "80%" && filedatas.filesystem.stdout.rate < "95%") {
+      style = "fssize-warning";
+    }else if (filedatas.filesystem.stdout.rate >= "95%") {
+      style = "fssize-danger";
+    }
+    tmp = tmp.concat(`
+      <li class="filelist-item ${style}">
+        <span>Total : ${filedatas.filesystem.stdout.total}</span>
+        <span>Utilisé : ${filedatas.filesystem.stdout.used}</span>
+        <span>Libre : ${filedatas.filesystem.stdout.free}</span>
+        <span>Taux d'utilisation : ${filedatas.filesystem.stdout.rate}</span>
+      </li>
+    `);
   }
-  tmp = tmp.concat(`
-    <li class="filelist-item ${style}">
-      <span>Total : ${filedatas.filesystem.stdout.total}</span>
-      <span>Utilisé : ${filedatas.filesystem.stdout.used}</span>
-      <span>Libre : ${filedatas.filesystem.stdout.free}</span>
-      <span>Taux d'utilisation : ${filedatas.filesystem.stdout.rate}</span>
-    </li>
-  `);
   if (filedatas.files.length > 0) {
     filedatas.files.forEach((file, i) => {
+      style = "filelist-item";
+      style = style.concat((filedatas.currentRecording && filedatas.currentRecording.filename && file.filename === filedatas.currentRecording.filename) ? " selected": "");
+      style = style.concat((file.err.error) ? " fileerror" : "");
       tmp = tmp.concat(`
-        <li class="filelist-item${(filedatas.currentRecording && filedatas.currentRecording.filename && file.filename === filedatas.currentRecording.filename) ? ' selected' : ''}">
+        <li class="${style}">
           <span>${file.filename}</span>
-          <span>(${file.stat.size})</span>
+          <span>(${file.stat.size} - ${file.duration})</span>
           <span class="spring"></span>
           <span>
             <span><button onclick="onClickDelete(${i})">Supprimer</button></span>
@@ -100,6 +105,7 @@ socket.on('config', config => {
   document.getElementById('field-alsa-format').value = config.alsa_format || "";
   document.getElementById('field-alsa-device').value = config.alsa_device || "";
   document.getElementById('field-debug').checked = config.debug || false;
+  setBusy(false);
 });
 function onClickShutdown() {
   if (confirm("Sûr(e) que tu veux arrêter ce superbe ordi ?")) {

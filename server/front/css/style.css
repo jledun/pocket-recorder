@@ -91,7 +91,11 @@ li {
   flex: 1 1 auto;
 }
 .selected {
-  background-color: Orange;
+  background-color: #bcffbe;
+}
+.fileerror {
+  font-style: italic;
+  font-color: grey;
 }
 .loader {
   width: 100%;

@@ -6,6 +6,7 @@ const utils = require('./utils.js');
 const fs = require('fs');
 const { exec } = require('child_process');
 const filesize = require('filesize');
+const wfi = require('wav-file-info');
 const Rx = require('rxjs/Rx');
 
 const refreshFilename = (options) => {
@@ -204,11 +205,16 @@ const o = {
     }).defaultIfEmpty('NO_EFFECT').concatMap(files => {
       return Rx.Observable.forkJoin(files.map(file => {
         return Rx.Observable.create(o => {
-          fs.stat(file.path.concat('/', file.filename), (err, stats) => {
-            if (err) return o.error(err);
-            stats.size = filesize(stats.size);
-            o.next(Object.assign({}, file, {stat: stats}));
-            o.complete();
+          wfi.infoByFilename(file.path.concat('/', file.filename), (err, stats) => {
+            if (err) {
+              if (err.stats) err.stats.size = filesize(err.stats.size);
+              o.next(Object.assign({}, file, {stat: err.stats || {}, duration: "?s", err: {error: err.error, invalid_reasons: [].concat(err.invalid_reasons)}}));
+              o.complete();
+            }else{
+              stats.stats.size = filesize(stats.stats.size);
+              o.next(Object.assign({}, file, {stat: stats.stats, duration: utils.getStringDuration(stats.duration * 1000), err: {error: false, invalid_reasons: []}}));
+              o.complete();
+            }
           })
         })
       }));
