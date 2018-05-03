@@ -227,8 +227,9 @@ const o = {
         p.status.sendFileData(result);
       },
       err => {
-        result.currentRecording = {};
-        result.files = [];
+        if (!result.filesystem) result.filesystem = {};
+        if (!result.currentRecording) result.currentRecording = {};
+        if (!result.files) result.files = [];
         p.status.sendFileData(result);
       },
       noop
