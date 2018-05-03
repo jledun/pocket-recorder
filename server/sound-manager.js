@@ -82,7 +82,7 @@ const o = {
       o.socket.on('reboot', o.reboot);
       o.socket.on('getConfig', () => o.socket.emit('config', Object.assign({}, o.options)));
       o.socket.on('updateConfig', o.updateConfig);
-      o.interval = setInterval(() => o.getFiles.call(this, o), 1000);
+      o.interval = setInterval(() => o.getFiles.call(this, o), 2000);
     }
   },
   cmdExec: cmd => {
