@@ -50,6 +50,9 @@ Every client connected to the RPI wifi AP have access to the shared folder.
 * autogenerate systemd service so that it's not dependant of the installation folder and to remove my personnal PocketRecorderProject folder
 * better design
 * validate options before save to file
+* add the capability to navigate into the wav file while playing
+* add the capability to display and choose sound cards for arecord and aplay
+* add the capability to manage sound levels (input and output) (an amixer web front end ?)
 * documentation : add RPI3 setup as a wifi access point
 * documentation : screenshots and user manual
 * documentation : how to share a folder on your RPI3 (to copy all files to windows easilly)
