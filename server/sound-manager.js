@@ -16,6 +16,7 @@ const refreshFilename = (options) => {
 const noop = () => {};
 
 const o = {
+  intervalTime: 1000,
   status: {
     playing: 0,
     recording: 0,
@@ -82,7 +83,7 @@ const o = {
       o.socket.on('reboot', o.reboot);
       o.socket.on('getConfig', () => o.socket.emit('config', Object.assign({}, o.options)));
       o.socket.on('updateConfig', o.updateConfig);
-      o.interval = setInterval(() => o.getFiles.call(this, o), 2000);
+      o.interval = setInterval(() => o.getFiles.call(this, o), o.intervalTime);
     }
   },
   cmdExec: cmd => {
