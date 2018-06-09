@@ -55,7 +55,7 @@ socket.on('status', status => {
 socket.on('files', filedatas => {
   if (location.pathname !== "/" && location.pathname !== "/index.html") return;
   let tmp = '<ul class="filelist-container">';
-  if (filedatas.filesystem) {
+  if (filedatas.filesystem && filedatas.filesystem.stdout) {
     let style = "fssize";
     if (filedatas.filesystem.stdout.rate >= "80%" && filedatas.filesystem.stdout.rate < "95%") {
       style = "fssize-warning";

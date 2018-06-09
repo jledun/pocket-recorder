@@ -9,6 +9,7 @@ Group=pi
 WorkingDirectory=/home/pi/Documents/PocketRecorderProject/server/
 ExecStart=/usr/bin/node /home/pi/Documents/PocketRecorderProject/server/server.js
 ExecStop=/usr/bin/killall node
+Restart=always
 
 [Install]
 WantedBy=multi-user.target
