@@ -221,7 +221,6 @@ const o = {
       }));
     }).defaultIfEmpty('NO_EFFECT').concatMap(files => {
       result = Object.assign({}, result, {files: files});
-      result.files.forEach(file => fs.closeSync(file.path.concat('/', file.filename)));
       return Rx.Observable.of(result.files.find(file => file.filename === p.options.filename));
     }).subscribe(
       data => {

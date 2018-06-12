@@ -11,7 +11,7 @@
     "rxjs": "^6.0.0",
     "rxjs-compat": "^6.0.0",
     "socket.io": "^2.0.3",
-    "wav-file-info": "0.0.8"
+    "wav-file-info": "git+https://github.com/rackfx/Node-WAV-File-Info.git"
   },
   "devDependencies": {},
   "scripts": {
