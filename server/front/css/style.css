@@ -78,8 +78,11 @@ li {
   flex: 0 0 auto;
   margin-right: 5px;
 }
-.filelist-item:nth-child(odd) {
+.filelist-item:nth-child(odd):not(.selected) {
   background-color: rgba(200,200,200,0.3);
+}
+.selected {
+  background-color: #bcffbe; !important
 }
 .fssize, .fssize-warning, .fssize-danger {
   border-top: 1px grey solid;
@@ -97,9 +100,6 @@ li {
 }
 .spring {
   flex: 1 1 auto;
-}
-.selected {
-  background-color: #bcffbe;
 }
 .fileerror {
   font-style: italic;
