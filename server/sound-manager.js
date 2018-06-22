@@ -36,32 +36,42 @@ const o = {
   player: {},
   recorder: {},
   interval: 0,
+  stopAll: cb => {
+    let stopPlayDone = false;
+    let stopRecordDone = false;
+    while (o.status.playing > 0) {
+      if (!stopPlayDone) {
+        o.stopPlay();
+        stopPlayDone = true;
+      }
+    }
+    while(o.status.recording > 0) {
+      if (!stopRecordDone) {
+        o.stopRecord();
+        stopRecordDone = true;
+      }
+    }
+    setTimeout(() => {
+      if (o.recorder) {
+        o.recorder = {};
+      }
+      if (o.player) {
+        o.player = {};
+      }
+      if (typeof cb === "function") cb();
+    }, 400);
+  },
   setSocket: socket => {
     o.socket = socket;
     if (o.interval) clearInterval(o.interval);
     if (o.socket) {
       o.socket.on('new', () => {
-        let stopPlayDone = false;
-        let stopRecordDone = false;
-        while (o.status.playing > 0) {
-          if (!stopPlayDone) {
-            o.stopPlay();
-            stopPlayDone = true;
-          }
-        }
-        while(o.status.recording > 0) {
-          if (!stopRecordDone) {
-            o.stopRecord();
-            stopRecordDone = true;
-          }
-        }
-        o.record();
+        o.stopAll(o.record);
       });
-      o.socket.on('play', o.play);
-      o.socket.on('stop', () => {
-        if (o.status.playing > 0) return o.stopPlay();
-        if (o.status.recording > 0) return o.stopRecord();
+      o.socket.on('play', () => {
+        o.stopAll(o.play);
       });
+      o.socket.on('stop', o.stopAll);
       o.socket.on('pause', () => {
         if (o.status.playing > 0) return o.pausePlay();
         if (o.status.recording > 0) return o.pauseRecord();
@@ -123,8 +133,10 @@ const o = {
     if (!o.fsdata) return;
     if (!o.fsdata.files || o.fsdata.files.length <= 0) return;
     if (!o.fsdata.files[item]) return;
-    o.options.filename = o.fsdata.files[item].filename;
-    o.play();
+    o.stopAll(() => {
+      o.options.filename = o.fsdata.files[item].filename;
+      o.play();
+    });
   },
   record: () => {
     o.options = refreshFilename(o.options);
