@@ -1,0 +1,3 @@
+install -d -o nobody -g nogroup -m 777 /home/pi/share
+install -d -o nobody -g nogroup -m 777 /home/pi/Music
+
